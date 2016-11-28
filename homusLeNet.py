@@ -24,7 +24,7 @@ nb_classes = 32
 nb_epoch = 50
 
 # HOMUS contains images of 40 x 40 pixels
-# input image dimensions for train
+# input image dimensions for training
 img_rows, img_cols = 20, 20
 
 # number of convolutional filters to use
@@ -66,50 +66,57 @@ def load_data():
 	Y = np_utils.to_categorical(np.asarray(class_list), nb_classes)
 
 	# Shuffle (X,Y)
-	randomize = np.arange(len(Y))
-	np.random.shuffle(randomize)
-	X, Y = X[randomize], Y[randomize]
+	#randomize = np.arange(len(Y))
+	#np.random.shuffle(randomize)
+	#X, Y = X[randomize], Y[randomize]
 
-	n_partition = int(n*0.9)	# Train 90% and Test 10%
+	#n_partition = int(n*0.9)	# Train 90% and Test 10%
 
-	X_train = X[:n_partition]
-	Y_train = Y[:n_partition]
+	#X_train = X[:n_partition]
+	#Y_train = Y[:n_partition]
 
-	X_test  = X[n_partition:]
-	Y_test  = Y[n_partition:]
+	#X_test  = X[n_partition:]
+	#Y_test  = Y[n_partition:]
 
-	return X_train, Y_train, X_test, Y_test, input_shape
+	#return X_train, Y_train, X_test, Y_test, input_shape
+	return X, Y, input_shape
 
 # the data split between train and test sets
-X_train, Y_train, X_test, Y_test, input_shape = load_data()
+#X_train, Y_train, X_test, Y_test, input_shape = load_data()
+X, Y, input_shape = load_data()
 
-print(X_train.shape, 'train samples')
-print(X_test.shape, 'test samples')
+#print(X_train.shape, 'train samples')
+#print(X_test.shape, 'test samples')
+
 print(input_shape,'input_shape')
 print(nb_epoch,'epochs')
 
 #
 # Neural Network Structure
 #
+def create_model():
+	model = Sequential()
 
-model = Sequential()
+	model.add(Convolution2D(nb_filters1, nb_conv1, nb_conv1, border_mode = 'valid', input_shape = input_shape))
+	model.add(MaxPooling2D(pool_size = (nb_pool, nb_pool)))
+	model.add(Activation("sigmoid"))
 
-model.add(Convolution2D(nb_filters1, nb_conv1, nb_conv1, border_mode = 'valid', input_shape = input_shape))
-model.add(MaxPooling2D(pool_size = (nb_pool, nb_pool)))
-model.add(Activation("sigmoid"))
+	model.add(Convolution2D(nb_filters2, nb_conv2, nb_conv2, border_mode = 'valid'))
+	model.add(MaxPooling2D(pool_size = (nb_pool, nb_pool)))
+	model.add(Activation("sigmoid"))
+	model.add(Dropout(0.5))
 
-model.add(Convolution2D(nb_filters2, nb_conv2, nb_conv2, border_mode = 'valid'))
-model.add(MaxPooling2D(pool_size = (nb_pool, nb_pool)))
-model.add(Activation("sigmoid"))
-model.add(Dropout(0.5))
+	model.add(Convolution2D(nb_filters3, nb_conv3, nb_conv3, border_mode = 'valid'))
 
-model.add(Convolution2D(nb_filters3, nb_conv3, nb_conv3, border_mode = 'valid'))
+	model.add(Flatten())
+	model.add(Dense(256))
+	model.add(Activation("sigmoid"))
+	model.add(Dense(nb_classes))
+	model.add(Activation('softmax'))
 
-model.add(Flatten())
-model.add(Dense(256))
-model.add(Activation("sigmoid"))
-model.add(Dense(nb_classes))
-model.add(Activation('softmax'))
+	return model
+
+model = create_model()
 
 optimizer = adadelta()
 model.compile(loss = 'categorical_crossentropy',optimizer = optimizer, metrics = ['accuracy'])
@@ -119,7 +126,7 @@ model.fit(X_train, Y_train, batch_size = batch_size, nb_epoch = nb_epoch,
 score = model.evaluate(X_test, Y_test, verbose = 0)
 
 #
-# Results
+# Re#sults
 #
 
 print('Test score:', score[0])
