@@ -24,7 +24,7 @@ from sklearn.model_selection import cross_val_score
 
 batch_size = 16
 nb_classes = 32
-nb_epoch = 50
+nb_epoch = 5
 
 # HOMUS contains images of 40 x 40 pixels
 # input image dimensions for training
@@ -66,7 +66,9 @@ def load_data():
 		X = np.asarray(image_list).reshape(n,img_rows,img_cols,1)
 		input_shape = (img_rows, img_cols, 1)
 
-	Y = np_utils.to_categorical(np.asarray(class_list), nb_classes)
+	#Y = np_utils.to_categorical(np.asarray(class_list), nb_classes)
+
+	Y = np.asarray(class_list)
 
 	# Shuffle (X,Y)
 	#randomize = np.arange(len(Y))
@@ -90,6 +92,9 @@ X, Y, input_shape = load_data()
 
 #print(X_train.shape, 'train samples')
 #print(X_test.shape, 'test samples')
+
+print(X.shape)
+print(Y.shape)
 
 print(input_shape,'input_shape')
 print(nb_epoch,'epochs')
@@ -128,18 +133,29 @@ def create_model():
 #          verbose = 1, validation_data = (X_test, Y_test))
 #score = model.evaluate(X_test, Y_test, verbose = 0)
 
-
 seed = 8
 np.random.seed(seed);
-model = KerasClassifier(build_fn=create_model, nb_epoch=nb_epoch, batch_size=10, verbose=1)
+optimizer = adadelta()
 
 kfold = StratifiedKFold(n_splits=10, shuffle=False, random_state=seed)
-results = cross_val_score(model, X, Y, cv=kfold)
+cvscores = []
 
+for train, test in kfold.split(X, Y):
+	model = create_model()
+	model.compile(loss = 'categorical_crossentropy',optimizer = optimizer, metrics = ['accuracy'])
+	yTrain = np_utils.to_categorical(Y[train], nb_classes)
+	print("shape entreno",yTrain.shape)
+	yTest = np_utils.to_categorical(Y[test], nb_classes)
+	print("shape test", yTest.shape)
+	model.fit(X[train], yTrain, nb_epoch=nb_epoch, batch_size=10, verbose=1)
+	# evaluate the model
+	scores = model.evaluate(X[test], yTest, verbose=0)
+	print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+	cvscores.append(scores[1] * 100)
 #
 # Results
 #
-print(results.mean())
+print("%.2f%% (+/- %.2f%%)" % (numpy.mean(cvscores), numpy.std(cvscores)))
 #print('Test score:', score[0])
 #print('Test accuracy:', score[1])
 
