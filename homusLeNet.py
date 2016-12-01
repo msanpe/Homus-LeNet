@@ -24,15 +24,15 @@ from sklearn.model_selection import cross_val_score
 
 batch_size = 16
 nb_classes = 32
-nb_epoch = 5
+nb_epoch = 50
 
 # HOMUS contains images of 40 x 40 pixels
 # input image dimensions for training
-img_rows, img_cols = 20, 20
+img_rows, img_cols = 18, 18
 
 # number of convolutional filters to use
 nb_filters1 = 6
-nb_filters2 = 16
+nb_filters2 = 64
 nb_filters3 = 120
 
 # convolution kernel size
@@ -46,6 +46,9 @@ nb_pool = 2
 #
 # Load data from data/HOMUS/train_0, data/HOMUS/train_1,...,data/HOMUS_31 folders from HOMUS images
 #
+
+
+
 def load_data():
 	image_list = []
 	class_list = []
@@ -66,35 +69,11 @@ def load_data():
 		X = np.asarray(image_list).reshape(n,img_rows,img_cols,1)
 		input_shape = (img_rows, img_cols, 1)
 
-	#Y = np_utils.to_categorical(np.asarray(class_list), nb_classes)
-
 	Y = np.asarray(class_list)
 
-	# Shuffle (X,Y)
-	#randomize = np.arange(len(Y))
-	#np.random.shuffle(randomize)
-	#X, Y = X[randomize], Y[randomize]
-
-	#n_partition = int(n*0.9)	# Train 90% and Test 10%
-
-	#X_train = X[:n_partition]
-	#Y_train = Y[:n_partition]
-
-	#X_test  = X[n_partition:]
-	#Y_test  = Y[n_partition:]
-
-	#return X_train, Y_train, X_test, Y_test, input_shape
 	return X, Y, input_shape
 
-# the data split between train and test sets
-#X_train, Y_train, X_test, Y_test, input_shape = load_data()
 X, Y, input_shape = load_data()
-
-#print(X_train.shape, 'train samples')
-#print(X_test.shape, 'test samples')
-
-print(X.shape)
-print(Y.shape)
 
 print(input_shape,'input_shape')
 print(nb_epoch,'epochs')
@@ -107,7 +86,7 @@ def create_model():
 
 	model.add(Convolution2D(nb_filters1, nb_conv1, nb_conv1, border_mode = 'valid', input_shape = input_shape))
 	model.add(MaxPooling2D(pool_size = (nb_pool, nb_pool)))
-	model.add(Activation("sigmoid"))
+	model.add(Activation("relu"))
 
 	model.add(Convolution2D(nb_filters2, nb_conv2, nb_conv2, border_mode = 'valid'))
 	model.add(MaxPooling2D(pool_size = (nb_pool, nb_pool)))
@@ -124,38 +103,33 @@ def create_model():
 
 	return model
 
-#model = create_model()
-
-#optimizer = adadelta()
-#model.compile(loss = 'categorical_crossentropy',optimizer = optimizer, metrics = ['accuracy'])
-
-#model.fit(X_train, Y_train, batch_size = batch_size, nb_epoch = nb_epoch,
-#          verbose = 1, validation_data = (X_test, Y_test))
-#score = model.evaluate(X_test, Y_test, verbose = 0)
-
 seed = 8
 np.random.seed(seed);
 optimizer = adadelta()
 
 kfold = StratifiedKFold(n_splits=10, shuffle=False, random_state=seed)
 cvscores = []
+i = 0
 
 for train, test in kfold.split(X, Y):
+	print ('fold {}'.format(i +1))
 	model = create_model()
 	model.compile(loss = 'categorical_crossentropy',optimizer = optimizer, metrics = ['accuracy'])
 	yTrain = np_utils.to_categorical(Y[train], nb_classes)
-	print("shape entreno",yTrain.shape)
 	yTest = np_utils.to_categorical(Y[test], nb_classes)
-	print("shape test", yTest.shape)
-	model.fit(X[train], yTrain, nb_epoch=nb_epoch, batch_size=10, verbose=1)
+	model.fit(X[train], yTrain, nb_epoch=nb_epoch, batch_size=10, verbose=2)
 	# evaluate the model
 	scores = model.evaluate(X[test], yTest, verbose=0)
 	print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 	cvscores.append(scores[1] * 100)
+	++i
 #
 # Results
 #
-print("%.2f%% (+/- %.2f%%)" % (numpy.mean(cvscores), numpy.std(cvscores)))
+f = open('workfile', 'w')
+for score in cvscores:
+	f.write('{}\n'.format(score))
+print("%.2f%% (+/- %.2f%%)" % (np.mean(cvscores), np.std(cvscores)))
 #print('Test score:', score[0])
 #print('Test accuracy:', score[1])
 
