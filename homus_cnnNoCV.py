@@ -120,12 +120,12 @@ def create_model():
 
 optimizer = SGD(lr = 0.01,momentum=0.1,nesterov = False)
 early_stopping = EarlyStopping(monitor='loss', patience=3)
-model = load_model('homus_cnn.h5')
-#model = create_model()
+#model = load_model('homus_cnn.h5')
+model = create_model()
 model.compile(loss = 'categorical_crossentropy',optimizer = optimizer, metrics = ['accuracy'])
 
-#history = model.fit(X_train, Y_train, batch_size = batch_size, nb_epoch = nb_epoch,
-#	verbose = 2, validation_data = (X_test, Y_test), callbacks=[early_stopping])
+history = model.fit(X_train, Y_train, batch_size = batch_size, nb_epoch = nb_epoch,
+	verbose = 2, validation_data = (X_test, Y_test), callbacks=[early_stopping])
 score = model.evaluate(X_test, Y_test, verbose = 1)
 
 #
@@ -159,7 +159,7 @@ plt.show()
 filename = 'homus_cnn.h5'
 
 # save network model
-#model.save(filename)
+model.save(filename)
 
 # load neetwork model
 #model = load_model(filename)
