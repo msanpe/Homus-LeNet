@@ -159,7 +159,7 @@ plt.show()
 filename = 'homus_cnn.h5'
 
 # save network model
-model.save(filename)
+#model.save(filename)
 
 # load neetwork model
 #model = load_model(filename)
