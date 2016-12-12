@@ -141,14 +141,14 @@ def create_model():
 
 #seed = 8
 #np.random.seed(seed);
-optimizer = SGD(lr = 0.01,momentum=0.1,nesterov = False)
+optimizer = adadelta()
 
 kfold = StratifiedKFold(n_splits=10, shuffle=False)
 cvscores = []
 i = 0
 
 for train, test in kfold.split(X, Y):
-	print ('fold {}'.format(i +1))
+	print ('fold {}'.format(i + 1))
 	model = create_model()
 	model.compile(loss = 'categorical_crossentropy',optimizer = optimizer, metrics = ['accuracy'])
 	yTrain = np_utils.to_categorical(Y[train], nb_classes)

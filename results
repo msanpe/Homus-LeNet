@@ -1,0 +1,18 @@
+Results
+
+original 20x20 50 epoch
+acc: 59.65%
+
+original 40x40 50 epoch
+acc: 82.09%
+
+mine 6 64 filters 50 epoch
+acc: 91.81%
+
+mine final dense 256
+acc: 91.30%
+
+adadelta...
+
+mine final 50 epoch adadelta
+acc: 92.03%
