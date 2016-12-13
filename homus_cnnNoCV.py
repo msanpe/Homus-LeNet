@@ -1,7 +1,8 @@
 '''
 Trains a simple LeNet-5 (http://yann.lecun.com/exdb/lenet/) adapted to the HOMUS dataset using Keras Software (http://keras.io/)
 LeNet-5 demo example http://eblearn.sourceforge.net/beginner_tutorial2_train.html
-This example executed with 8x8 reescaled images and 50 epochs obtains an accuracy close to 32%.
+
+This example executed with 40x40 reescaled images and 30 epochs obtains an accuracy close to 95%.
 '''
 
 from __future__ import print_function
@@ -26,19 +27,6 @@ nb_epoch = 5
 # HOMUS contains images of 40 x 40 pixels
 # input image dimensions for train
 img_rows, img_cols = 10, 10
-
-# number of convolutional filters to use
-nb_filters1 = 6
-nb_filters2 = 16
-nb_filters3 = 120
-
-# convolution kernel size
-nb_conv1 = 5
-nb_conv2 = 6
-nb_conv3 = 1
-
-# size of pooling area for max pooling
-nb_pool = 2
 
 #
 # Load data from data/HOMUS/train_0, data/HOMUS/train_1,...,data/HOMUS_31 folders from HOMUS images
@@ -130,7 +118,6 @@ score = model.evaluate(X_test, Y_test, verbose = 1)
 
 #
 # Results
-# imoprimimos los resu
 #
 
 print('Test score:', score[0])

@@ -1,3 +1,10 @@
+'''
+Author: Miguel Sancho
+
+Data augmenting script for the Homus dataset
+'''
+
+
 from __future__ import print_function
 from PIL import Image, ImageOps
 import numpy as np

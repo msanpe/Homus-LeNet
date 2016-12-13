@@ -1,38 +1,8 @@
 '''
 Author: Miguel Sancho
 
-Este script genera una red y ejecuta un 10-fold crossvalidation sobre ella, al final de cada
-uno de los pliegues se muestra dos graficas, una de train accuracy/validation accuracy y la otra de train loss/
-
-Estructura de la red:
-____________________________________________________________________________________________________
-Layer (type)                     Output Shape          Param #     Connected to
-====================================================================================================
-convolution2d_1 (Convolution2D)  (None, 40, 40, 20)    520         convolution2d_input_1[0][0]
-____________________________________________________________________________________________________
-activation_1 (Activation)        (None, 40, 40, 20)    0           convolution2d_1[0][0]
-____________________________________________________________________________________________________
-maxpooling2d_1 (MaxPooling2D)    (None, 20, 20, 20)    0           activation_1[0][0]
-____________________________________________________________________________________________________
-convolution2d_2 (Convolution2D)  (None, 20, 20, 50)    25050       maxpooling2d_1[0][0]
-____________________________________________________________________________________________________
-activation_2 (Activation)        (None, 20, 20, 50)    0           convolution2d_2[0][0]
-____________________________________________________________________________________________________
-maxpooling2d_2 (MaxPooling2D)    (None, 10, 10, 50)    0           activation_2[0][0]
-____________________________________________________________________________________________________
-dropout_1 (Dropout)              (None, 10, 10, 50)    0           maxpooling2d_2[0][0]
-____________________________________________________________________________________________________
-flatten_1 (Flatten)              (None, 5000)          0           dropout_1[0][0]
-____________________________________________________________________________________________________
-dense_1 (Dense)                  (None, 500)           2500500     flatten_1[0][0]
-____________________________________________________________________________________________________
-activation_3 (Activation)        (None, 500)           0           dense_1[0][0]
-____________________________________________________________________________________________________
-dense_2 (Dense)                  (None, 32)            16032       activation_3[0][0]
-____________________________________________________________________________________________________
-activation_4 (Activation)        (None, 32)            0           dense_2[0][0]
-====================================================================================================
-Total params: 2542102
+Script which executes a 10-fold crossvalidation, after each fold it will generate two graphs, the first one
+will show train and validation accuracy and the second one train and test loss
 
 '''
 
@@ -61,19 +31,6 @@ nb_epoch = 30
 # HOMUS contains images of 40 x 40 pixels
 # input image dimensions for training
 img_rows, img_cols = 40, 40
-
-# number of convolutional filters to use
-nb_filters1 = 6
-nb_filters2 = 64
-nb_filters3 = 120
-
-# convolution kernel size
-nb_conv1 = 5
-nb_conv2 = 6
-nb_conv3 = 1
-
-# size of pooling area for max pooling
-nb_pool = 2
 
 #
 # Load data from data/HOMUS/train_0, data/HOMUS/train_1,...,data/HOMUS_31 folders from HOMUS images
