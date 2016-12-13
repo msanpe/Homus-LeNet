@@ -22,11 +22,11 @@ import matplotlib.pyplot as plt
 
 batch_size = 16
 nb_classes = 32
-nb_epoch = 5
+nb_epoch = 30
 
 # HOMUS contains images of 40 x 40 pixels
-# input image dimensions for train
-img_rows, img_cols = 10, 10
+# input image dimensions for training
+img_rows, img_cols = 40, 40
 
 #
 # Load data from data/HOMUS/train_0, data/HOMUS/train_1,...,data/HOMUS_31 folders from HOMUS images
