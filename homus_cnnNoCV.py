@@ -21,11 +21,11 @@ import matplotlib.pyplot as plt
 
 batch_size = 16
 nb_classes = 32
-nb_epoch = 30
+nb_epoch = 5
 
 # HOMUS contains images of 40 x 40 pixels
 # input image dimensions for train
-img_rows, img_cols = 40, 40
+img_rows, img_cols = 10, 10
 
 # number of convolutional filters to use
 nb_filters1 = 6

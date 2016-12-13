@@ -141,7 +141,7 @@ def create_model():
 
 #seed = 8
 #np.random.seed(seed);
-optimizer = adadelta()
+optimizer = SGD(lr = 0.01,momentum=0.1,nesterov = False)
 
 kfold = StratifiedKFold(n_splits=10, shuffle=False)
 cvscores = []
